@@ -1404,7 +1404,7 @@
 
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label class="form-label">คำชี้แจง / เหตุผลความจำเป็น</label>
-                        <textarea class="form-control"
+                        <textarea class="form-control" id="reason"
                             placeholder="ระบุรายละเอียดเหตุผลความจำเป็นในการตั้งงบประมาณ..."></textarea>
                     </div>
 
@@ -1432,20 +1432,50 @@
                     </div>
 
                     <div class="review-card">
+                        <h4
+                            style="color: var(--primary); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            ข้อมูลทั่วไป</h4>
                         <div class="review-item">
-                            <span class="r-label">ประเภทงบประมาณ</span>
+                            <span class="r-label">ประเภทหมวดรายจ่าย</span>
                             <span class="r-value" id="reviewCat">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="r-label">แหล่งงบประมาณ</span>
+                            <span class="r-value" id="reviewSource">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="r-label">หน่วยงาน/ภาควิชา</span>
+                            <span class="r-value" id="reviewDept">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="r-label">แผนงาน</span>
+                            <span class="r-value" id="reviewPlan">-</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="r-label">ผลผลิต/โครงการ</span>
+                            <span class="r-value" id="reviewProject">-</span>
+                        </div>
+
+                        <h4
+                            style="color: var(--primary); margin-bottom: 15px; margin-top: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            รายละเอียดคำขอ</h4>
+                        <div class="review-item">
+                            <span class="r-label">หมวดรายจ่ายย่อย</span>
+                            <span class="r-value" id="reviewSubCat">-</span>
                         </div>
                         <div class="review-item">
                             <span class="r-label">รายการ</span>
                             <span class="r-value" id="reviewName">-</span>
                         </div>
                         <div class="review-item">
-                            <span class="r-label">แผนงาน/โครงการ</span>
-                            <span class="r-value">1: แผนงานบุคลากรภาครัฐ / 4101: รายการค่าใช้จ่าย...</span>
+                            <span class="r-label">เหตุผลความจำเป็น</span>
+                            <span class="r-value" id="reviewReason"
+                                style="font-weight: 400; color: var(--text-main);">-</span>
                         </div>
 
                         <div class="total-highlight">
+                            <div class="r-label" style="text-align: right; margin-bottom: 5px;">งบประมาณอุดหนุน : <span
+                                    id="reviewPriceDetail" style="font-weight: 500;">0 x 0</span></div>
                             <div class="r-label">งบประมาณสุทธิ</div>
                             <div class="r-value" id="reviewTotal">0.00 บาท</div>
                         </div>
@@ -1627,10 +1657,40 @@
                 // Populate Review
                 try {
                     document.getElementById('reviewName').textContent = document.getElementById('itemName').value || '-';
+                    // 1. General Info
                     document.getElementById('reviewCat').textContent = document.getElementById('selectedCategory').value || '-';
+
+                    const srcEl = document.getElementById('budgetSource');
+                    // Check if element exists before accessing properties to avoid errors if step 2 wasn't visited (though it should be)
+                    if (srcEl) document.getElementById('reviewSource').textContent = srcEl.options[srcEl.selectedIndex]?.text || '-';
+
+                    const deptEl = document.getElementById('department');
+                    if (deptEl) document.getElementById('reviewDept').textContent = deptEl.options[deptEl.selectedIndex]?.text || '-';
+
+                    const planEl = document.getElementById('planId');
+                    if (planEl) document.getElementById('reviewPlan').textContent = planEl.options[planEl.selectedIndex]?.text || '-';
+
+                    const prjEl = document.getElementById('projectId');
+                    if (prjEl) document.getElementById('reviewProject').textContent = prjEl.options[prjEl.selectedIndex]?.text || '-';
+
+                    // 2. Request Details
+                    const subCatEl = document.getElementById('subCategory');
+                    if (subCatEl) document.getElementById('reviewSubCat').textContent = subCatEl.options[subCatEl.selectedIndex]?.text || '-';
+
+                    const itemName = document.getElementById('itemName').value;
+                    /* Logic to prefer manual input if "Other" is selected is handled by the fact that itemName input holds the value for both cases in my previous logic? */
+                    /* Wait, toggleItemNameInput sets manualInput.value = select.value for normal options. */
+                    /* So itemName.value is always the correct string. Correct. */
+                    document.getElementById('reviewName').textContent = itemName || '-';
+
+                    const reason = document.getElementById('reason').value;
+                    document.getElementById('reviewReason').textContent = reason ? reason : '-';
+
+                    // 3. Budget
                     const q = parseFloat(document.getElementById('qty').value) || 0;
                     const p = parseFloat(document.getElementById('price').value) || 0;
                     const total = q * p;
+                    document.getElementById('reviewPriceDetail').textContent = `${q} หน่วย x ${p.toLocaleString('th-TH')} บาท`;
                     document.getElementById('reviewTotal').textContent = total.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' บาท';
                 } catch (e) { console.error(e); }
             } else {
