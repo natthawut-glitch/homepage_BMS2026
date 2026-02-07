@@ -1090,7 +1090,7 @@
                     <div class="page-title" style="display: flex; align-items: start; gap: 15px;">
                         <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
                         <div>
-                            <h1>รายการคำขอตั้งงบประมาณ</h1>
+                            <h1>รายการคำขอตั้งงบประมาณ(Prototype)</h1>
                             <p style="color: var(--text-muted);">ระบบสารสนเทศเพื่อการบริหารงบประมาณ (MSU_BMS)</p>
                         </div>
                     </div>
@@ -1249,7 +1249,7 @@
                             <i class="fas fa-check-circle check-mark"></i>
                             <i class="fas fa-coins cat-icon"></i>
                             <div class="cat-title">5. งบรายจ่ายอื่น</div>
-                            <div class="cat-desc">รายจ่ายที่ไม่เข้าพวก 1-4, เงินราชการลับ</div>
+                            <div class="cat-desc">รายจ่ายที่ไม่สามารถจำแนกได้ 1-4</div>
                         </div>
                     </div>
                     <input type="hidden" id="selectedCategory" name="selectedCategory">
@@ -1288,54 +1288,68 @@
                             style="font-size: 0.8em; color: var(--text-muted); font-weight: 400;"></span></h3>
 
                     <form id="detailsForm">
+                        <!-- Row 1: Source & Department -->
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">แหล่งงบประมาณ <span class="required">*</span></label>
-                                <select class="form-control">
-                                    <option>10:เงินแผ่นดิน</option>
-                                    <option>20:เงินรายได้</option>
-                                    <option>24:เงินสะสม</option>
-                                    <option>22:เงินกองทุน</option>
+                                <select class="form-control" id="budgetSource">
+                                    <option value="" disabled selected>-- เลือกแหล่งงบประมาณ --</option>
+                                    <option value="10">10: เงินแผ่นดิน</option>
+                                    <option value="20">20: เงินรายได้</option>
+                                    <option value="22">22: เงินกองทุน</option>
+                                    <option value="24">24: เงินสะสม</option>
                                 </select>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">ภาควิชา/สาขา <span class="required">*</span></label>
-                                    <select class="form-control">
-                                        <option>ภาควิชา ก</option>
-                                        <option>ภาควิชา ข</option>
-                                        <option>ภาควิชา ค</option>
-                                        <option>ภาควิชา ง</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label class="form-label">หน่วยงาน/ภาควิชา <span class="required">*</span></label>
+                                <select class="form-control" id="department">
+                                    <option value="" disabled selected>-- เลือกหน่วยงาน --</option>
+                                    <option value="DEPT01">สำนักงานเลขานุการ</option>
+                                    <option value="DEPT02">ภาควิชาบริหารธุรกิจ</option>
+                                    <option value="DEPT03">ภาควิชาการบัญชี</option>
+                                    <option value="DEPT04">ภาควิชาคอมพิวเตอร์ธุรกิจ</option>
+                                    <option value="DEPT05">ภาควิชาเศรษฐศาสตร์</option>
+                                </select>
                             </div>
+                        </div>
 
+                        <!-- Row 2: Plan & Project -->
+                        <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">แผนงาน <span class="required">*</span></label>
-                                <select class="form-control">
-                                    <option>1: แผนงานบุคลากรภาครัฐ</option>
-                                    <option>2: แผนงานยุทธศาสตร์</option>
-                                    <option>3: แผนงานพื้นฐาน</option>
+                                <select class="form-control" id="planId">
+                                    <option value="" disabled selected>-- เลือกแผนงาน --</option>
+                                    <option value="P01">1: แผนงานบุคลากรภาครัฐ</option>
+                                    <option value="P02">2: แผนงานยุทธศาสตร์</option>
+                                    <option value="P03">3: แผนงานพื้นฐาน</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">ผลผลิต/โครงการ </label>
-                                <select class="form-control">
-                                    <option>4101: รายการค่าใช้จ่ายบุคลากรภาครัฐ</option>
-                                    <option>4102: โครงการพัฒนาศักยภาพ</option>
+                                <label class="form-label">ผลผลิต/โครงการ <span class="required">*</span></label>
+                                <select class="form-control" id="projectId">
+                                    <option value="" disabled selected>-- เลือกผลผลิต/โครงการ --</option>
+                                    <option value="PRJ01">4101: รายการค่าใช้จ่ายบุคลากรภาครัฐ</option>
+                                    <option value="PRJ02">4102: โครงการพัฒนาศักยภาพนิสิต</option>
+                                    <option value="PRJ03">4103: โครงการบริหารจัดการคณะฯ</option>
                                 </select>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">หมวดรายจ่ายย่อย<span class="required">*</span></label>
-                                    <select class="form-control">
-                                        <option>ค่าจ้างชั่วคราว</option>
-                                        <option>ค่าตอบแทน</option>
-                                        <option>ค่าใช้สอย</option>
-                                        <option>ค่าวัสดุ</option>
-                                        <option>ค่าสาธารณูปโภค</option>
-                                    </select>
-                                </div>
+                        </div>
+
+                        <!-- Row 3: Sub-category -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">หมวดรายจ่ายย่อย <span class="required">*</span></label>
+                                <select class="form-control" id="subCategory">
+                                    <option value="" disabled selected>-- เลือกหมวดรายจ่ายย่อย --</option>
+                                    <option value="SUB01">ค่าจ้างชั่วคราว</option>
+                                    <option value="SUB02">ค่าตอบแทน</option>
+                                    <option value="SUB03">ค่าใช้สอย</option>
+                                    <option value="SUB04">ค่าวัสดุ</option>
+                                    <option value="SUB05">ค่าสาธารณูปโภค</option>
+                                    <option value="SUB06">ค่าครุภัณฑ์</option>
+                                    <option value="SUB07">ค่าที่ดินและสิ่งก่อสร้าง</option>
+                                    <option value="SUB08">เงินอุดหนุน</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-row">
@@ -1720,18 +1734,40 @@
                 currentStep = 2;
             }
             else if (currentStep === 2) {
-                // Validate Step 2
-                const itemName = document.getElementById('itemName').value;
-                const itemNameMap = document.getElementById('itemNameMap').value;
+                // Validate Step 2 - Form Details
+                const budgetSource = document.getElementById('budgetSource').value;
+                const department = document.getElementById('department').value;
+                const planId = document.getElementById('planId').value;
+                const projectId = document.getElementById('projectId').value;
+                const subCategory = document.getElementById('subCategory').value;
 
-                if (!itemNameMap) {
+                if (!budgetSource) { alert('กรุณาระบุแหล่งงบประมาณ'); document.getElementById('budgetSource').focus(); return; }
+                if (!department) { alert('กรุณาระบุหน่วยงาน/ภาควิชา'); document.getElementById('department').focus(); return; }
+                if (!planId) { alert('กรุณาระบุแผนงาน'); document.getElementById('planId').focus(); return; }
+                if (!projectId) { alert('กรุณาระบุผลผลิต/โครงการ'); document.getElementById('projectId').focus(); return; }
+                if (!subCategory) { alert('กรุณาระบุหมวดรายจ่ายย่อย'); document.getElementById('subCategory').focus(); return; }
+
+                // Item Name Validation
+                const itemNameInput = document.getElementById('itemName');
+                const itemNameMapValue = document.getElementById('itemNameMap').value;
+
+                if (!itemNameMapValue) {
                     alert('กรุณาระบุชื่อรายการ');
+                    document.getElementById('itemNameMap').focus();
                     return;
                 }
-                if (itemNameMap === 'other_manual_input' && !itemName.trim()) {
-                    alert('กรุณาระบุชื่อรายการ (อื่นๆ)');
-                    document.getElementById('itemName').focus();
-                    return;
+
+                if (itemNameMapValue === 'other_manual_input') {
+                    if (!itemNameInput.value || !itemNameInput.value.trim()) {
+                        alert('กรุณาระบุชื่อรายการ (อื่นๆ)');
+                        itemNameInput.style.display = 'block'; // Ensure it's visible
+                        itemNameInput.focus();
+                        return;
+                    }
+                } else {
+                    // Auto-sync value in case onchange missed it
+                    itemNameInput.value = itemNameMapValue;
+                    itemNameInput.style.display = 'none';
                 }
 
                 currentStep = 3;
