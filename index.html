@@ -713,50 +713,133 @@
             background: #059669;
         }
 
+        /* Mobile Menu Button */
+        .menu-toggle-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            /* Will need JS to handle fade in properly usually but block is fine */
+            opacity: 1;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .app-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                padding: 10px 20px;
                 flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
+                /* Keep row generally but sidebar is fixed */
+                overflow: hidden;
+                /* Prevent body scroll when sidebar open? No, keep it simple */
             }
 
-            .nav-item {
-                margin-bottom: 0;
-                padding: 8px;
+            /* Sidebar Drawer Logic */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100%;
+                background: white;
+                z-index: 1000;
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+                padding-top: 20px;
             }
 
-            .nav-item span {
-                display: none;
+            .sidebar.active {
+                left: 0;
             }
 
+            .menu-toggle-btn {
+                display: block;
+            }
+
+            .main-content {
+                width: 100%;
+                padding: 15px;
+            }
+
+            /* Header adjustments */
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            /* Dashboard Grid Stacking */
+            .dashboard-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Wizard Mobile */
             .wizard-container {
                 width: 100%;
                 height: 100%;
                 border-radius: 0;
             }
 
+            .wizard-header {
+                padding: 15px 20px;
+            }
+
+            .wizard-body {
+                padding: 20px;
+            }
+
             .stepper-wrapper {
-                padding: 15px;
-                overflow-x: auto;
+                padding: 10px;
                 justify-content: flex-start;
+                overflow-x: auto;
             }
 
             .step {
-                width: 100px;
-                min-width: 100px;
+                min-width: 110px;
+            }
+
+            .step-circle {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9em;
             }
 
             .form-row {
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .wizard-footer {
+                padding: 15px 20px;
+                flex-direction: column-reverse;
+                /* Stack buttons */
+                gap: 10px;
+            }
+
+            .wizard-footer button {
+                width: 100%;
             }
         }
 
@@ -932,9 +1015,12 @@
             <!-- VIEW: DASHBOARD -->
             <div id="view-dashboard" class="view-section active">
                 <div class="header">
-                    <div class="page-title">
-                        <h1>Executive Dashboard</h1>
-                        <p style="color: var(--text-muted);">ภาพรวมสถานะงบประมาณและการเงิน ประจำปีงบประมาณ 2569</p>
+                    <div class="page-title" style="display: flex; align-items: start; gap: 15px;">
+                        <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                        <div>
+                            <h1>Executive Dashboard</h1>
+                            <p style="color: var(--text-muted);">ภาพรวมสถานะงบประมาณและการเงิน ประจำปีงบประมาณ 2569</p>
+                        </div>
                     </div>
                     <div>
                         <span
@@ -1001,9 +1087,12 @@
             <!-- VIEW: BUDGET REQUEST LIST -->
             <div id="view-budget-request" class="view-section">
                 <div class="header">
-                    <div class="page-title">
-                        <h1>รายการคำขอตั้งงบประมาณ</h1>
-                        <p style="color: var(--text-muted);">ระบบสารสนเทศเพื่อการบริหารงบประมาณ (MSU_BMS)</p>
+                    <div class="page-title" style="display: flex; align-items: start; gap: 15px;">
+                        <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                        <div>
+                            <h1>รายการคำขอตั้งงบประมาณ</h1>
+                            <p style="color: var(--text-muted);">ระบบสารสนเทศเพื่อการบริหารงบประมาณ (MSU_BMS)</p>
+                        </div>
                     </div>
                     <button class="btn-add" onclick="openWizard()">
                         <i class="fas fa-plus"></i> เพิ่มรายการคำขอ
@@ -1079,6 +1168,8 @@
             </div>
 
         </main>
+        <!-- Overlay -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     </div>
 
     <!-- Wizard Modal -->
@@ -1383,6 +1474,14 @@
 
         function closeWizard() {
             document.getElementById('wizardTarget').classList.remove('active');
+        }
+
+        /* Responsive Sidebar */
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
         }
 
         // --- Chart.js Initialisation ---
