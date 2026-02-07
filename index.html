@@ -1308,25 +1308,26 @@
                                         <option>ภาควิชา ง</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">แผนงาน <span class="required">*</span></label>
-                                    <select class="form-control">
-                                        <option>1: แผนงานบุคลากรภาครัฐ</option>
-                                        <option>2: แผนงานยุทธศาสตร์</option>
-                                        <option>3: แผนงานพื้นฐาน</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">ผลผลิต/โครงการ <span class="required">*</span></label>
-                                    <select class="form-control">
-                                        <option>4101: รายการค่าใช้จ่ายบุคลากรภาครัฐ</option>
-                                        <option>4102: โครงการพัฒนาศักยภาพ</option>
-                                    </select>
-                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">แผนงาน <span class="required">*</span></label>
+                                <select class="form-control">
+                                    <option>1: แผนงานบุคลากรภาครัฐ</option>
+                                    <option>2: แผนงานยุทธศาสตร์</option>
+                                    <option>3: แผนงานพื้นฐาน</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ผลผลิต/โครงการ </label>
+                                <select class="form-control">
+                                    <option>4101: รายการค่าใช้จ่ายบุคลากรภาครัฐ</option>
+                                    <option>4102: โครงการพัฒนาศักยภาพ</option>
+                                </select>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">หมวดรายจ่ายย่อย</label>
+                                    <label class="form-label">หมวดรายจ่ายย่อย<span class="required">*</span></label>
                                     <select class="form-control">
                                         <option>ค่าจ้างชั่วคราว</option>
                                         <option>ค่าตอบแทน</option>
@@ -1336,46 +1337,48 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">รายการ (ชื่อคำขอ) <span class="required">*</span></label>
-                                    <!-- Container for Dual Mode Input -->
-                                    <div style="display: flex; gap: 10px;">
-                                        <select class="form-control" id="itemNameMap"
-                                            onchange="toggleItemNameInput(this)" style="flex:1;">
-                                            <option value="" disabled selected>-- เลือกรายการจากฐานข้อมูล --</option>
-                                            <optgroup label="ค่าตอบแทน">
-                                                <option value="ค่าตอบแทนกรรมการ">ค่าตอบแทนกรรมการ</option>
-                                                <option value="ค่าสอน">ค่าสอน</option>
-                                                <option value="ค่าเบี้ยประชุมคณะกรรมการ">ค่าเบี้ยประชุมคณะกรรมการ
-                                                </option>
-                                                <option value="เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร">
-                                                    เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร</option>
-                                            </optgroup>
-                                            <optgroup label="ค่าใช้สอย">
-                                                <option value="ค่าจ้างเหมาบริการ"></option>
-                                                <option value="ค่ารับรองและพิธีการ">ค่ารับรองและพิธีการ</option>
-                                                <option value=" ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ">
-                                                    ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ</option>
-                                            </optgroup>
-                                            <optgroup label="ค่าวัสดุ">
-                                                <option value="วัสดุสำนักงาน">วัสดุสำนักงาน
-                                                </option>
-                                                <option value="วัสดุคอมพิวเตอร์">วัสดุคอมพิวเตอร์</option>
-                                                <option value="วัสดุงานบ้านงานครัว">วัสดุงานบ้านงานครัว
-                                                </option>
-                                            </optgroup>
-                                            <option value="other_manual_input"
-                                                style="font-weight: bold; color: var(--primary);">+ อื่นๆ (ระบุเอง)
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">รายการ (ชื่อคำขอ) <span class="required">*</span></label>
+                                <!-- Container for Dual Mode Input -->
+                                <div style="display: flex; gap: 10px;">
+                                    <select class="form-control" id="itemNameMap" onchange="toggleItemNameInput(this)"
+                                        style="flex:1;">
+                                        <option value="" disabled selected>-- เลือกรายการจากฐานข้อมูล --</option>
+                                        <optgroup label="ค่าตอบแทน">
+                                            <option value="ค่าตอบแทนกรรมการ">ค่าตอบแทนกรรมการ</option>
+                                            <option value="ค่าสอน">ค่าสอน</option>
+                                            <option value="ค่าเบี้ยประชุมคณะกรรมการ">ค่าเบี้ยประชุมคณะกรรมการ
                                             </option>
-                                        </select>
-                                        <input type="text" class="form-control" id="itemName"
-                                            placeholder="ระบุชื่อรายการ..." style="display: none; flex:1;">
-                                    </div>
-                                    <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 5px;">
-                                        เลือกรายการที่มีอยู่เพื่อความถูกต้อง หรือเลือก "อื่นๆ" เพื่อระบุใหม่</p>
+                                            <option value="เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร">
+                                                เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร</option>
+                                        </optgroup>
+                                        <optgroup label="ค่าใช้สอย">
+                                            <option value="ค่าจ้างเหมาบริการ"></option>
+                                            <option value="ค่ารับรองและพิธีการ">ค่ารับรองและพิธีการ</option>
+                                            <option value=" ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ">
+                                                ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ</option>
+                                        </optgroup>
+                                        <optgroup label="ค่าวัสดุ">
+                                            <option value="วัสดุสำนักงาน">วัสดุสำนักงาน
+                                            </option>
+                                            <option value="วัสดุคอมพิวเตอร์">วัสดุคอมพิวเตอร์</option>
+                                            <option value="วัสดุงานบ้านงานครัว">วัสดุงานบ้านงานครัว
+                                            </option>
+                                        </optgroup>
+                                        <option value="other_manual_input"
+                                            style="font-weight: bold; color: var(--primary);">+
+                                            อื่นๆ (ระบุเอง)
+                                        </option>
+                                    </select>
+                                    <input type="text" class="form-control" id="itemName"
+                                        placeholder="ระบุชื่อรายการ..." style="display: none; flex:1;">
                                 </div>
+                                <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 5px;">
+                                    เลือกรายการที่มีอยู่เพื่อความถูกต้อง หรือเลือก "อื่นๆ" เพื่อระบุใหม่</p>
                             </div>
+                        </div>
                     </form>
                 </div>
 
