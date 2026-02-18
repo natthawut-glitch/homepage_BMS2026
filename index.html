@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSU_BMS ระบบสารสนเทศเพื่อการบริหารงบประมาณ</title>
+    <title>MSU:BMS ระบบสารสนเทศเพื่อการบริหารงบประมาณ</title>
     <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap"
@@ -24,6 +24,9 @@
             --accent: #0ea5e9;
             /* Sky Blue */
             --success: #10b981;
+            --green: #10b981;
+            --green-light: #ecfdf5;
+            --green-dark: #059669;
             --bg-body: #f1f5f9;
             --bg-card: #ffffff;
             --text-main: #1e293b;
@@ -944,6 +947,53 @@
         .view-section.active {
             display: block;
         }
+
+        /* Tabs - Modern pill styling */
+        .tab-nav {
+            display: flex;
+            gap: 12px;
+            padding: 8px;
+            background: rgba(16,185,129,0.03);
+            border-radius: 14px;
+            align-items: center;
+            border: 1px solid rgba(16,185,129,0.06);
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            background: transparent;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.18s cubic-bezier(.2,.9,.2,1);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:not(.active):hover {
+            transform: translateY(-2px);
+            background: rgba(16,185,129,0.06);
+            color: var(--green-dark);
+        }
+
+        .tab-btn.active {
+            color: #ffffff !important;
+            background: linear-gradient(90deg, var(--green-dark), var(--green));
+            box-shadow: 0 8px 20px rgba(16,185,129,0.18);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .tab-nav { gap: 8px; padding: 6px; }
+            .tab-btn { padding: 8px 12px; font-size: 0.96rem; }
+        }
+
     </style>
 </head>
 
@@ -1107,13 +1157,10 @@
                     <div class="page-title" style="display: flex; align-items: start; gap: 15px;">
                         <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
                         <div>
-                            <h1>รายการคำขอตั้งงบประมาณ(Prototype)</h1>
-                            <p style="color: var(--text-muted);">ระบบสารสนเทศเพื่อการบริหารงบประมาณ (MSU_BMS)</p>
+                            <h1>สรุปรายการคำขอตั้งงบประมาณ(Prototype)</h1>
+                            <p style="color: var(--text-muted);">ระบบสารสนเทศเพื่อการบริหารงบประมาณ (MSU:BMS)</p>
                         </div>
                     </div>
-                    <button class="btn-add" onclick="openWizard()">
-                        <i class="fas fa-plus"></i> เพิ่มรายการคำขอ
-                    </button>
                 </div>
 
                 <div class="stats-grid">
@@ -1131,55 +1178,168 @@
                     </div>
                 </div>
 
-                <div class="table-card">
-                    <div class="table-header">
-                        <div>รายการล่าสุด</div>
-                        <button class="btn btn-secondary" style="font-size: 0.8em; padding: 5px 12px;"><i
-                                class="fas fa-filter"></i> กรองข้อมูล</button>
+                <!-- Tab Navigation & Content -->
+                
+                <!-- Charts removed from this view as requested -->
+                <div style="margin-top: 30px;">
+                    <!-- Tabs -->
+                    <div class="tab-nav">
+                        <button class="tab-btn active" onclick="switchRequestTab('budget')" id="tab-btn-budget">1. บันทึกรายการคำของบประมาณ</button>
+                        <button class="tab-btn" onclick="switchRequestTab('project')" id="tab-btn-project">2. บันทึกรายการโครงการ</button>
+                        <button class="tab-btn" onclick="switchRequestTab('report')" id="tab-btn-report">3. สรุปรายงาน</button>
                     </div>
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ลำดับ</th>
-                                    <th>รายการ</th>
-                                    <th>ประเภทงบ</th>
-                                    <th>จำนวนเงิน</th>
-                                    <th>สถานะ</th>
-                                    <th>จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>จัดซื้อเครื่องคอมพิวเตอร์สำนักงาน</td>
-                                    <td><span
-                                            style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบลงทุน</span>
-                                    </td>
-                                    <td>85,000</td>
-                                    <td><i class="fas fa-circle" style="color: #10b981; font-size: 0.6em;"></i>
-                                        อนุมัติแล้ว
-                                    </td>
-                                    <td><i class="fas fa-ellipsis-h"
-                                            style="color: var(--text-muted); cursor: pointer;"></i>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>ค่าเบี้ยประชุมคณะกรรมการ</td>
-                                    <td><span
-                                            style="background: #eff6ff; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบดำเนินงาน</span>
-                                    </td>
-                                    <td>12,000</td>
-                                    <td><i class="fas fa-circle" style="color: #f59e0b; font-size: 0.6em;"></i>
-                                        รอดำเนินการ
-                                    </td>
-                                    <td><i class="fas fa-ellipsis-h"
-                                            style="color: var(--text-muted); cursor: pointer;"></i>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    <!-- Tab Content 1: Budget Request -->
+                    <div id="tab-content-budget" style="display: block;">
+                        <!-- Move existing table here and add "Add" button inside -->
+                        <div style="margin-bottom: 15px; text-align: left;">
+                            <button class="btn btn-primary" onclick="openWizard()">
+                                <i class="fas fa-plus"></i> บันทึกรายการคำขอใหม่
+                            </button>
+                        </div>
+
+                        <div class="table-card">
+                            <div class="table-header">
+                                <div>รายการล่าสุด</div>
+                                <button class="btn btn-secondary" style="font-size: 0.8em; padding: 5px 12px;"><i
+                                        class="fas fa-filter"></i> กรองข้อมูล</button>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ลำดับ</th>
+                                            <th>รายการ</th>
+                                            <th>ประเภทงบ</th>
+                                            <th>จำนวนเงิน</th>
+                                            <th>สถานะ</th>
+                                            <th>จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>จัดซื้อเครื่องคอมพิวเตอร์สำนักงาน</td>
+                                            <td><span
+                                                    style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบลงทุน</span>
+                                            </td>
+                                            <td>85,000</td>
+                                            <td><i class="fas fa-circle" style="color: #10b981; font-size: 0.6em;"></i>
+                                                อนุมัติแล้ว
+                                            </td>
+                                            <td><i class="fas fa-ellipsis-h"
+                                                    style="color: var(--text-muted); cursor: pointer;"></i>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>ค่าเบี้ยประชุมคณะกรรมการ</td>
+                                            <td><span
+                                                    style="background: #eff6ff; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบดำเนินงาน</span>
+                                            </td>
+                                            <td>12,000</td>
+                                            <td><i class="fas fa-circle" style="color: #f59e0b; font-size: 0.6em;"></i>
+                                                รอดำเนินการ
+                                            </td>
+                                            <td><i class="fas fa-ellipsis-h"
+                                                    style="color: var(--text-muted); cursor: pointer;"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content 2: Project Request -->
+                    <div id="tab-content-project" style="display: none;">
+                        <div style="margin-bottom: 15px; text-align: left;">
+                            <button class="btn btn-primary" onclick="openWizard('project')">
+                                <i class="fas fa-plus"></i> เพิ่มโครงการใหม่
+                            </button>
+                        </div>
+
+                        <div class="table-card">
+                            <div class="table-header">
+                                <div>รายการโครงการล่าสุด</div>
+                                <button class="btn btn-secondary" style="font-size: 0.8em; padding: 5px 12px;"><i
+                                        class="fas fa-filter"></i> กรองข้อมูล</button>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ลำดับ</th>
+                                            <th>ชื่อโครงการ</th>
+                                            <th>ประเภท</th>
+                                            <th>จำนวนเงิน</th>
+                                            <th>สถานะ</th>
+                                            <th>จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>โครงการพัฒนาศักยภาพนิสิต</td>
+                                            <td><span
+                                                    style="background: #eff6ff; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">โครงการยุทธศาสตร์</span>
+                                            </td>
+                                            <td>250,000</td>
+                                            <td><i class="fas fa-circle" style="color: #10b981; font-size: 0.6em;"></i>
+                                                อนุมัติแล้ว
+                                            </td>
+                                            <td><i class="fas fa-ellipsis-h"
+                                                    style="color: var(--text-muted); cursor: pointer;"></i>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>โครงการวิจัยพื้นฐาน</td>
+                                            <td><span
+                                                    style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">โครงการวิจัย</span>
+                                            </td>
+                                            <td>120,000</td>
+                                            <td><i class="fas fa-circle" style="color: #f59e0b; font-size: 0.6em;"></i>
+                                                รอดำเนินการ
+                                            </td>
+                                            <td><i class="fas fa-ellipsis-h"
+                                                    style="color: var(--text-muted); cursor: pointer;"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content 3: Report Summary (4 charts) -->
+                    <div id="tab-content-report" style="display: none;">
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <div class="chart-title">มิติแผนงาน (จำนวนคำขอ/งบ)</div>
+                                </div>
+                                <canvas id="reportByPlanChart" style="height:220px;"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <div class="chart-title">มิติงบรายจ่าย (สัดส่วนตามประเภท)</div>
+                                </div>
+                                <canvas id="reportByExpenseChart" style="height:220px;"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <div class="chart-title">มิติ: แผน vs การใช้จ่าย (รายเดือน)</div>
+                                </div>
+                                <canvas id="reportPlanVsSpendingChart" style="height:220px;"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <div class="chart-title">มิติ: เทียบกรอบประมาณการ (Budget Frame)</div>
+                                </div>
+                                <canvas id="reportBudgetFrameChart" style="height:220px;"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1195,7 +1355,7 @@
             <!-- Header -->
             <div class="wizard-header">
                 <div class="wizard-title">
-                    <h2>บันทึกรายการคำขอใหม่</h2>
+                    <h2 id="wizardHeaderTitle">บันทึกรายการคำขอใหม่</h2>
                     <p>กรุณากรอกข้อมูลตามขั้นตอนให้ครบถ้วน</p>
                 </div>
                 <button class="btn-close" onclick="closeWizard()"><i class="fas fa-times"></i></button>
@@ -1279,6 +1439,7 @@
                     </div>
                     <input type="hidden" id="selectedCategory" name="selectedCategory">
                     <input type="hidden" id="hasSpecialStep" value="false">
+                    <input type="hidden" id="wizardOrigin" value="budget">
                 </div>
 
                 <!-- Step Special: Conditional -->
@@ -1377,7 +1538,7 @@
                                 </select>
                             </div>
                         </div>
-                        </form>div>
+                    </form>div>
                     </form>
                 </div>
 
@@ -1385,22 +1546,26 @@
                 <div class="step-content" id="step3">
                     <h3 style="margin-bottom: 20px; font-family: var(--font-head); color: var(--primary);">
                         รายละเอียดงบประมาณ</h3>
-                    
+
                     <div id="items-container">
                         <!-- Dynamic Rows will be added here -->
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <button type="button" class="btn btn-secondary" onclick="addItemRow()" style="width: 100%; border-style: dashed;">
+                        <button type="button" class="btn btn-secondary" onclick="addItemRow()"
+                            style="width: 100%; border-style: dashed;">
                             <i class="fas fa-plus-circle"></i> เพิ่มรายการ
                         </button>
                     </div>
 
-                    <div class="form-group" style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                    <div class="form-group"
+                        style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label class="form-label" style="margin: 0; font-size: 1.1em;">รวมเป็นเงินทั้งสิ้น (บาท)</label>
+                            <label class="form-label" style="margin: 0; font-size: 1.1em;">รวมเป็นเงินทั้งสิ้น
+                                (บาท)</label>
                             <input type="text" class="form-control" id="total" readonly
-                                style="width: 200px; text-align: right; font-weight: 700; color: var(--primary); font-size: 1.2em;" value="0.00">
+                                style="width: 200px; text-align: right; font-weight: 700; color: var(--primary); font-size: 1.2em;"
+                                value="0.00">
                         </div>
                     </div>
 
@@ -1700,9 +1865,15 @@
             content.classList.toggle('show');
         }
 
-        function openWizard() {
-            document.getElementById('wizardTarget').classList.add('active');
+        function openWizard(origin = 'budget') {
+            // Reset then set origin and title, finally open
             resetWizard();
+            const originVal = origin || 'budget';
+            const originInput = document.getElementById('wizardOrigin');
+            if (originInput) originInput.value = originVal;
+            const titleEl = document.getElementById('wizardHeaderTitle');
+            if (titleEl) titleEl.textContent = originVal === 'project' ? 'บันทึกโครงการใหม่' : 'บันทึกรายการคำขอใหม่';
+            document.getElementById('wizardTarget').classList.add('active');
         }
 
         function closeWizard() {
@@ -1755,6 +1926,62 @@
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
+
+            // Report Tab Charts (if present)
+            const rptPlanEl = document.getElementById('reportByPlanChart');
+            if (rptPlanEl) {
+                const ctxRptPlan = rptPlanEl.getContext('2d');
+                new Chart(ctxRptPlan, {
+                    type: 'bar',
+                    data: {
+                        labels: ['แผนงาน A', 'แผนงาน B', 'แผนงาน C', 'แผนงาน D'],
+                        datasets: [{ label: 'จำนวนคำขอ', data: [20, 14, 9, 5], backgroundColor: ['#34d399','#10b981','#6ee7b7','#bbf7d0'], borderRadius: 6 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            const rptExpenseEl = document.getElementById('reportByExpenseChart');
+            if (rptExpenseEl) {
+                const ctxRptExp = rptExpenseEl.getContext('2d');
+                new Chart(ctxRptExp, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['บุคลากร','ดำเนินงาน','ลงทุน','อุดหนุน','อื่นๆ'],
+                        datasets: [{ data: [40,30,15,10,5], backgroundColor: ['#10b981','#3b82f6','#f59e0b','#8b5cf6','#64748b'], borderWidth: 0 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
+                });
+            }
+
+            const rptPlanVsEl = document.getElementById('reportPlanVsSpendingChart');
+            if (rptPlanVsEl) {
+                const ctxRptPlanVs = rptPlanVsEl.getContext('2d');
+                new Chart(ctxRptPlanVs, {
+                    type: 'line',
+                    data: {
+                        labels: ['ต.ค','พ.ย','ธ.ค','ม.ค','ก.พ','มี.ค'],
+                        datasets: [
+                            { label: 'แผน', data: [5,5,6,6,7,7], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.06)', tension: 0.3, fill: true },
+                            { label: 'การใช้จริง', data: [4,4.5,5.5,5,6.5,6], borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.06)', tension: 0.3, fill: true }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            const rptFrameEl = document.getElementById('reportBudgetFrameChart');
+            if (rptFrameEl) {
+                const ctxRptFrame = rptFrameEl.getContext('2d');
+                new Chart(ctxRptFrame, {
+                    type: 'polarArea',
+                    data: {
+                        labels: ['กรอบ A','กรอบ B','กรอบ C','กรอบ D'],
+                        datasets: [{ data: [30,25,20,25], backgroundColor: ['#60a5fa','#34d399','#fbbf24','#c084fc'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                });
+            }
         });
 
         // --- Wizard Navigation Logic ---
@@ -1944,57 +2171,57 @@
                 if (!subCategory) { alert('กรุณาระบุหมวดรายจ่ายย่อย'); document.getElementById('subCategory').focus(); return; }
 
                 // Item Name Validation moved to Step 3
-                
+
                 // Init Step 3 with one row if empty
                 const container = document.getElementById('items-container');
                 if (container.children.length === 0) {
-                     addItemRow();
+                    addItemRow();
                 }
 
                 currentStep = 3;
             }
             else if (currentStep === 3) {
-                 // Validate Step 3 Items
-                 const rows = document.querySelectorAll('.item-row');
-                 if(rows.length === 0) {
-                     alert('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ');
-                     return;
-                 }
+                // Validate Step 3 Items
+                const rows = document.querySelectorAll('.item-row');
+                if (rows.length === 0) {
+                    alert('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ');
+                    return;
+                }
 
-                 let isValid = true;
-                 rows.forEach((row, index) => {
-                     const nameMap = row.querySelector('.item-name-map');
-                     const nameInput = row.querySelector('.item-name-input');
-                     const qty = row.querySelector('.item-qty');
-                     const price = row.querySelector('.item-price');
+                let isValid = true;
+                rows.forEach((row, index) => {
+                    const nameMap = row.querySelector('.item-name-map');
+                    const nameInput = row.querySelector('.item-name-input');
+                    const qty = row.querySelector('.item-qty');
+                    const price = row.querySelector('.item-price');
 
-                     if (!nameMap.value) {
-                         alert(`กรุณาระบุชื่อรายการ (รายการที่ ${index + 1})`);
-                         nameMap.focus();
-                         isValid = false;
-                         return;
-                     }
-                     if (nameMap.value === 'other_manual_input' && !nameInput.value.trim()) {
-                         alert(`กรุณาระบุชื่อรายการอื่นๆ (รายการที่ ${index + 1})`);
-                         nameInput.focus();
-                         isValid = false;
-                         return;
-                     }
-                     if (!qty.value || parseFloat(qty.value) <= 0) {
-                         alert(`กรุณาระบุจำนวนหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
-                         qty.focus();
-                         isValid = false;
-                         return;
-                     }
-                     if (!price.value || parseFloat(price.value) <= 0) {
-                         alert(`กรุณาระบุราคาต่อหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
-                         price.focus();
-                         isValid = false;
-                         return;
-                     }
-                 });
+                    if (!nameMap.value) {
+                        alert(`กรุณาระบุชื่อรายการ (รายการที่ ${index + 1})`);
+                        nameMap.focus();
+                        isValid = false;
+                        return;
+                    }
+                    if (nameMap.value === 'other_manual_input' && !nameInput.value.trim()) {
+                        alert(`กรุณาระบุชื่อรายการอื่นๆ (รายการที่ ${index + 1})`);
+                        nameInput.focus();
+                        isValid = false;
+                        return;
+                    }
+                    if (!qty.value || parseFloat(qty.value) <= 0) {
+                        alert(`กรุณาระบุจำนวนหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
+                        qty.focus();
+                        isValid = false;
+                        return;
+                    }
+                    if (!price.value || parseFloat(price.value) <= 0) {
+                        alert(`กรุณาระบุราคาต่อหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
+                        price.focus();
+                        isValid = false;
+                        return;
+                    }
+                });
 
-                 if(!isValid) return;
+                if (!isValid) return;
 
                 currentStep = 4;
             }
@@ -2050,11 +2277,11 @@
         }
 
         // --- Dynamic Item Rows Logic ---
-        
+
         function addItemRow() {
             const container = document.getElementById('items-container');
             const rowId = 'row-' + Date.now();
-            
+
             const rowHtml = `
                 <div class="item-row" id="${rowId}" style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; background: white; position: relative;">
                     <button type="button" class="btn-close" onclick="removeItemRow('${rowId}')" style="position: absolute; top: 10px; right: 10px; font-size: 0.8em; color: #ef4444;" tabindex="-1">
@@ -2104,7 +2331,7 @@
                     </div>
                 </div>
             `;
-            
+
             container.insertAdjacentHTML('beforeend', rowHtml);
         }
 
@@ -2117,17 +2344,17 @@
         }
 
         function toggleItemNameInput(selectElement) {
-             const row = selectElement.closest('.item-row');
-             const manualInput = row.querySelector('.item-name-input');
-             
-             if (selectElement.value === 'other_manual_input') {
+            const row = selectElement.closest('.item-row');
+            const manualInput = row.querySelector('.item-name-input');
+
+            if (selectElement.value === 'other_manual_input') {
                 manualInput.style.display = 'block';
                 manualInput.focus();
-                manualInput.value = ''; 
-             } else {
+                manualInput.value = '';
+            } else {
                 manualInput.style.display = 'none';
-                manualInput.value = selectElement.value; 
-             }
+                manualInput.value = selectElement.value;
+            }
         }
 
         function calculateTotal() {
@@ -2136,11 +2363,11 @@
                 const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
                 const price = parseFloat(row.querySelector('.item-price').value) || 0;
                 const total = qty * price;
-                
+
                 row.querySelector('.item-total').value = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
                 grandTotal += total;
             });
-            
+
             const totalEl = document.getElementById('total');
             if (totalEl) totalEl.value = grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 });
         }
@@ -2148,14 +2375,16 @@
         function resetWizard() {
             currentStep = 1;
             document.getElementById('hasSpecialStep').value = 'false';
+            const originInput = document.getElementById('wizardOrigin');
+            if (originInput) originInput.value = 'budget';
             document.getElementById('detailsForm').reset();
             document.getElementById('selectedCategory').value = '';
             document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
-            
+
             // Clear items
             const container = document.getElementById('items-container');
             if (container) container.innerHTML = '';
-            
+
             // Reset Total
             const totalEl = document.getElementById('total');
             if (totalEl) totalEl.value = '0.00';
@@ -2164,6 +2393,41 @@
             if (displayCat) displayCat.innerText = '';
 
             updateStepUI();
+        }
+
+        function switchRequestTab(tabName) {
+            const budgetBtn = document.getElementById('tab-btn-budget');
+            const projectBtn = document.getElementById('tab-btn-project');
+            const reportBtn = document.getElementById('tab-btn-report');
+            const budgetContent = document.getElementById('tab-content-budget');
+            const projectContent = document.getElementById('tab-content-project');
+            const reportContent = document.getElementById('tab-content-report');
+
+            if (tabName === 'budget') {
+                budgetBtn.classList.add('active');
+                projectBtn.classList.remove('active');
+                if (reportBtn) reportBtn.classList.remove('active');
+
+                budgetContent.style.display = 'block';
+                projectContent.style.display = 'none';
+                if (reportContent) reportContent.style.display = 'none';
+            } else if (tabName === 'project') {
+                projectBtn.classList.add('active');
+                budgetBtn.classList.remove('active');
+                if (reportBtn) reportBtn.classList.remove('active');
+
+                projectContent.style.display = 'block';
+                budgetContent.style.display = 'none';
+                if (reportContent) reportContent.style.display = 'none';
+            } else if (tabName === 'report') {
+                if (reportBtn) reportBtn.classList.add('active');
+                budgetBtn.classList.remove('active');
+                projectBtn.classList.remove('active');
+
+                if (reportContent) reportContent.style.display = 'block';
+                budgetContent.style.display = 'none';
+                projectContent.style.display = 'none';
+            }
         }
 
         function saveData() {
