@@ -300,21 +300,25 @@
         }
 
         /* --- Wizard Modal (The Core Request) --- */
+        /* --- Wizard Modal (Transformed to Page View) --- */
         .modal-overlay {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 100%;
+            left: 250px;
+            /* Sidebar offset */
+            width: calc(100% - 250px);
             height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            background: var(--bg-body);
+            z-index: 50;
+            /* Lower than sidebar (usually) or just beside it */
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
+            overflow-y: auto;
+            /* Enable page scrolling */
+            padding: 30px;
+            display: block;
+            /* changed from flex to block for normal flow */
         }
 
         .modal-overlay.active {
@@ -322,23 +326,36 @@
             visibility: visible;
         }
 
+        @media (max-width: 768px) {
+            .modal-overlay {
+                left: 0;
+                width: 100%;
+                padding: 15px;
+                z-index: 1050;
+                /* On top of everything in mobile */
+            }
+        }
+
         .wizard-container {
             background: white;
-            width: 90%;
-            max-width: 1100px;
-            height: 90vh;
-            /* Fixed height for consistent feel */
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: none;
+            height: auto;
+            min-height: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: visible;
+            /* Let content expand */
+            transform: translateY(20px);
+            transition: transform 0.3s ease-out;
+            margin-bottom: 50px;
+            /* Space for scrolling */
         }
 
         .modal-overlay.active .wizard-container {
-            transform: scale(1);
+            transform: translateY(0);
         }
 
         /* Wizard Header */
@@ -1206,6 +1223,14 @@
                     </div>
                     <div class="step" id="stepIndicator4">
                         <div class="step-circle">4</div>
+                        <div class="step-label">แผนรายเดือน</div>
+                    </div>
+                    <div class="step" id="stepIndicator5">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">ROI/SROI</div>
+                    </div>
+                    <div class="step" id="stepIndicator6">
+                        <div class="step-circle">6</div>
                         <div class="step-label">ตรวจสอบ</div>
                     </div>
                 </div>
@@ -1233,19 +1258,19 @@
                             <div class="cat-title">2. งบดำเนินงาน</div>
                             <div class="cat-desc">ค่าตอบแทน, ค่าใช้สอย, ค่าวัสดุ, สาธารณูปโภค</div>
                         </div>
-                        <div class="cat-card" onclick="selectCategory(this, 'งบลงทุน', true)">
+                        <div class="cat-card" onclick="selectCategory(this, 'งบลงทุน', false)">
                             <i class="fas fa-check-circle check-mark"></i>
                             <i class="fas fa-building cat-icon"></i>
                             <div class="cat-title">3. งบลงทุน</div>
                             <div class="cat-desc">ค่าครุภัณฑ์, ค่าที่ดินและสิ่งก่อสร้าง</div>
                         </div>
-                        <div class="cat-card" onclick="selectCategory(this, 'งบเงินอุดหนุน', true)">
+                        <div class="cat-card" onclick="selectCategory(this, 'งบเงินอุดหนุน', false)">
                             <i class="fas fa-check-circle check-mark"></i>
                             <i class="fas fa-hand-holding-heart cat-icon"></i>
                             <div class="cat-title">4. งบเงินอุดหนุน</div>
                             <div class="cat-desc">เงินอุดหนุนทั่วไป, เงินอุดหนุนเฉพาะกิจ</div>
                         </div>
-                        <div class="cat-card" onclick="selectCategory(this, 'งบรายจ่ายอื่น', true)">
+                        <div class="cat-card" onclick="selectCategory(this, 'งบรายจ่ายอื่น', false)">
                             <i class="fas fa-check-circle check-mark"></i>
                             <i class="fas fa-coins cat-icon"></i>
                             <div class="cat-title">5. งบรายจ่ายอื่น</div>
@@ -1352,67 +1377,30 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">รายการ (ชื่อคำขอ) <span class="required">*</span></label>
-                                <!-- Container for Dual Mode Input -->
-                                <div style="display: flex; gap: 10px;">
-                                    <select class="form-control" id="itemNameMap" onchange="toggleItemNameInput(this)"
-                                        style="flex:1;">
-                                        <option value="" disabled selected>-- เลือกรายการจากฐานข้อมูล --</option>
-                                        <optgroup label="ค่าตอบแทน">
-                                            <option value="ค่าตอบแทนกรรมการ">ค่าตอบแทนกรรมการ</option>
-                                            <option value="ค่าสอน">ค่าสอน</option>
-                                            <option value="ค่าเบี้ยประชุมคณะกรรมการ">ค่าเบี้ยประชุมคณะกรรมการ
-                                            </option>
-                                            <option value="เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร">
-                                                เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร</option>
-                                        </optgroup>
-                                        <optgroup label="ค่าใช้สอย">
-                                            <option value="ค่าจ้างเหมาบริการ"></option>
-                                            <option value="ค่ารับรองและพิธีการ">ค่ารับรองและพิธีการ</option>
-                                            <option value=" ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ">
-                                                ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ</option>
-                                        </optgroup>
-                                        <optgroup label="ค่าวัสดุ">
-                                            <option value="วัสดุสำนักงาน">วัสดุสำนักงาน
-                                            </option>
-                                            <option value="วัสดุคอมพิวเตอร์">วัสดุคอมพิวเตอร์</option>
-                                            <option value="วัสดุงานบ้านงานครัว">วัสดุงานบ้านงานครัว
-                                            </option>
-                                        </optgroup>
-                                        <option value="other_manual_input"
-                                            style="font-weight: bold; color: var(--primary);">+
-                                            อื่นๆ (ระบุเอง)
-                                        </option>
-                                    </select>
-                                    <input type="text" class="form-control" id="itemName"
-                                        placeholder="ระบุชื่อรายการ..." style="display: none; flex:1;">
-                                </div>
-                                <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 5px;">
-                                    เลือกรายการที่มีอยู่เพื่อความถูกต้อง หรือเลือก "อื่นๆ" เพื่อระบุใหม่</p>
-                            </div>
-                        </div>
+                        </form>div>
                     </form>
                 </div>
 
                 <!-- Step 3: Budget & Files -->
                 <div class="step-content" id="step3">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">จำนวน (หน่วย) <span class="required">*</span></label>
-                            <input type="number" class="form-control" id="qty" placeholder="0"
-                                oninput="calculateTotal()">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">ราคาต่อหน่วย (บาท) <span class="required">*</span></label>
-                            <input type="number" class="form-control" id="price" placeholder="0.00"
-                                oninput="calculateTotal()">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">รวมเป็นเงิน (บาท)</label>
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-head); color: var(--primary);">
+                        รายละเอียดงบประมาณ</h3>
+                    
+                    <div id="items-container">
+                        <!-- Dynamic Rows will be added here -->
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <button type="button" class="btn btn-secondary" onclick="addItemRow()" style="width: 100%; border-style: dashed;">
+                            <i class="fas fa-plus-circle"></i> เพิ่มรายการ
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label class="form-label" style="margin: 0; font-size: 1.1em;">รวมเป็นเงินทั้งสิ้น (บาท)</label>
                             <input type="text" class="form-control" id="total" readonly
-                                style="background-color: #f1f5f9; font-weight: 600; color: var(--primary);">
+                                style="width: 200px; text-align: right; font-weight: 700; color: var(--primary); font-size: 1.2em;" value="0.00">
                         </div>
                     </div>
 
@@ -1434,8 +1422,168 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Summary -->
+                <!-- Step 4: Monthly Plan -->
                 <div class="step-content" id="step4">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-head); color: var(--primary);">
+                        แผนการใช้จ่ายรายเดือน</h3>
+
+                    <!-- Budget Summary Header -->
+                    <div
+                        style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px;">
+                            <div>
+                                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">
+                                    งบประมาณที่ขอ (Step 3)</div>
+                                <div style="font-size: 1.6rem; font-weight: 700; color: var(--primary); font-family: var(--font-head);"
+                                    id="displayBudgetStep3">0.00</div>
+                            </div>
+                            <div style="text-align: right; padding-right: 20px; border-right: 1px solid var(--border);">
+                                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">
+                                    รวมแผนรายเดือน</div>
+                                <div style="font-size: 1.4rem; font-weight: 600; color: var(--text-main);"
+                                    id="displayPlanTotal">0.00</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">คงเหลือ /
+                                    ส่วนต่าง</div>
+                                <div style="font-size: 1.4rem; font-weight: 600; color: #ef4444;" id="displayPlanDiff">
+                                    0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quarters Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <!-- Q1 -->
+                        <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                            <div
+                                style="background: #eff6ff; padding: 10px 15px; font-weight: 600; color: var(--primary-dark); font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+                                ไตรมาสที่ 1 (ต.ค. - ธ.ค.)
+                            </div>
+                            <div style="padding: 15px;">
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">ตุลาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">พฤศจิกายน</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.85rem;">ธันวาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                            <div
+                                style="background: #eff6ff; padding: 10px 15px; font-weight: 600; color: var(--primary-dark); font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+                                ไตรมาสที่ 2 (ม.ค. - มี.ค.)
+                            </div>
+                            <div style="padding: 15px;">
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">มกราคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">กุมภาพันธ์</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.85rem;">มีนาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                            <div
+                                style="background: #eff6ff; padding: 10px 15px; font-weight: 600; color: var(--primary-dark); font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+                                ไตรมาสที่ 3 (เม.ย. - มิ.ย.)
+                            </div>
+                            <div style="padding: 15px;">
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">เมษายน</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">พฤษภาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.85rem;">มิถุนายน</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                            <div
+                                style="background: #eff6ff; padding: 10px 15px; font-weight: 600; color: var(--primary-dark); font-size: 0.95rem; border-bottom: 1px solid var(--border);">
+                                ไตรมาสที่ 4 (ก.ค. - ก.ย.)
+                            </div>
+                            <div style="padding: 15px;">
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">กรกฎาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label class="form-label" style="font-size: 0.85rem;">สิงหาคม</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size: 0.85rem;">กันยายน</label>
+                                    <input type="number" class="form-control plan-month" placeholder="0.00"
+                                        oninput="calculatePlanTotal()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: ROI/SROI -->
+                <div class="step-content" id="step5">
+                    <h3 style="margin-bottom: 20px; font-family: var(--font-head); color: var(--primary);">
+                        วิเคราะห์ความคุ้มค่า (ROI/SROI)</h3>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label">ประโยชน์ที่คาดว่าจะได้รับ (เชิงปริมาณ)</label>
+                        <textarea class="form-control"
+                            placeholder="ระบุตัวเลขหรือสถิติที่คาดว่าจะเกิดขึ้น..."></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label">ประโยชน์ที่คาดว่าจะได้รับ (เชิงคุณภาพ)</label>
+                        <textarea class="form-control" placeholder="ระบุผลกระทบทางสังคม หรือคุณภาพชีวิต..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ความสอดคล้องกับยุทธศาสตร์มหาวิทยาลัย</label>
+                        <select class="form-control">
+                            <option>ยุทธศาสตร์ที่ 1: การจัดการศึกษา</option>
+                            <option>ยุทธศาสตร์ที่ 2: การวิจัยและนวัตกรรม</option>
+                            <option>ยุทธศาสตร์ที่ 3: การบริการวิชาการ</option>
+                            <option>ยุทธศาสตร์ที่ 4: การทำนุบำรุงศิลปวัฒนธรรม</option>
+                            <option>ยุทธศาสตร์ที่ 5: การบริหารจัดการ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 6: Summary -->
+                <div class="step-content" id="step6">
                     <div style="text-align: center; margin-bottom: 25px;">
                         <div
                             style="width: 60px; height: 60px; background: #ecfdf5; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 15px;">
@@ -1468,6 +1616,16 @@
                         <div class="review-item">
                             <span class="r-label">ผลผลิต/โครงการ</span>
                             <span class="r-value" id="reviewProject">-</span>
+                        </div>
+
+                        รายละเอียดคำขอ</h4>
+
+                        <h4
+                            style="color: var(--primary); margin-bottom: 15px; margin-top: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            แผนการใช้จ่ายรายเดือน</h4>
+                        <div id="reviewPlanContent"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                            <!-- Populated by JS -->
                         </div>
 
                         <h4
@@ -1515,6 +1673,9 @@
 
         // --- View Switching Logic ---
         function switchView(viewName, menuElement) {
+            // Hide wizard if open
+            closeWizard();
+
             // Hide all views
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
 
@@ -1630,7 +1791,18 @@
             else if (currentStep === 1.5) currentContentId = 'stepSpecial';
             else if (currentStep === 2) currentContentId = 'step2';
             else if (currentStep === 3) currentContentId = 'step3';
-            else if (currentStep === 4) currentContentId = 'step4';
+            else if (currentStep === 4) {
+                currentContentId = 'step4';
+                // Initialize Step 4 Budget View
+                setTimeout(() => {
+                    const totalStr = document.getElementById('total').value || "0";
+                    const dispBudget = document.getElementById('displayBudgetStep3');
+                    if (dispBudget) dispBudget.textContent = totalStr;
+                    if (typeof calculatePlanTotal === 'function') calculatePlanTotal();
+                }, 0);
+            }
+            else if (currentStep === 5) currentContentId = 'step5';
+            else if (currentStep === 6) currentContentId = 'step6';
 
             const content = document.getElementById(currentContentId);
             if (content) {
@@ -1656,7 +1828,13 @@
             if (currentStep > 3) s3.classList.add('completed'); else if (currentStep >= 3) s3.classList.add('active');
 
             const s4 = document.getElementById('stepIndicator4');
-            if (currentStep === 4) s4.classList.add('active');
+            if (currentStep > 4) s4.classList.add('completed'); else if (currentStep >= 4) s4.classList.add('active');
+
+            const s5 = document.getElementById('stepIndicator5');
+            if (currentStep > 5) s5.classList.add('completed'); else if (currentStep >= 5) s5.classList.add('active');
+
+            const s6 = document.getElementById('stepIndicator6');
+            if (currentStep === 6) s6.classList.add('active');
 
             // Button State
             const bBack = document.getElementById('btnBack');
@@ -1665,7 +1843,7 @@
             const bNext = document.getElementById('btnNext');
             const bSave = document.getElementById('btnSave');
 
-            if (currentStep === 4) {
+            if (currentStep === 6) {
                 bNext.style.display = 'none';
                 bSave.style.display = 'inline-flex';
                 // Populate Review
@@ -1692,15 +1870,33 @@
                     if (subCatEl) document.getElementById('reviewSubCat').textContent = subCatEl.options[subCatEl.selectedIndex]?.text || '-';
 
                     const itemName = document.getElementById('itemName').value;
-                    /* Logic to prefer manual input if "Other" is selected is handled by the fact that itemName input holds the value for both cases in my previous logic? */
-                    /* Wait, toggleItemNameInput sets manualInput.value = select.value for normal options. */
-                    /* So itemName.value is always the correct string. Correct. */
                     document.getElementById('reviewName').textContent = itemName || '-';
 
                     const reason = document.getElementById('reason').value;
                     document.getElementById('reviewReason').textContent = reason ? reason : '-';
 
-                    // 3. Budget
+                    // 3. Plan Review
+                    const months = ['ต.ค.', 'พ.ย.', 'ธ.ค.', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.'];
+                    let planHtml = '';
+                    let hasPlan = false;
+                    document.querySelectorAll('.plan-month').forEach((inp, index) => {
+                        const val = parseFloat(inp.value) || 0;
+                        if (val > 0) {
+                            hasPlan = true;
+                            planHtml += `
+                                <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem;">
+                                    <span style="color: var(--text-muted); display: block; font-size: 0.8em; margin-bottom: 2px;">${months[index]}</span>
+                                    <span style="font-weight: 600; color: var(--text-main);">${val.toLocaleString('th-TH')}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    if (!hasPlan) planHtml = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-style: italic;">ไม่ได้ระบุแผนรายเดือน</div>';
+
+                    const reviewPlanContent = document.getElementById('reviewPlanContent');
+                    if (reviewPlanContent) reviewPlanContent.innerHTML = planHtml;
+
+                    // 4. Budget
                     const q = parseFloat(document.getElementById('qty').value) || 0;
                     const p = parseFloat(document.getElementById('price').value) || 0;
                     const total = q * p;
@@ -1747,40 +1943,95 @@
                 if (!projectId) { alert('กรุณาระบุผลผลิต/โครงการ'); document.getElementById('projectId').focus(); return; }
                 if (!subCategory) { alert('กรุณาระบุหมวดรายจ่ายย่อย'); document.getElementById('subCategory').focus(); return; }
 
-                // Item Name Validation
-                const itemNameInput = document.getElementById('itemName');
-                const itemNameMapValue = document.getElementById('itemNameMap').value;
-
-                if (!itemNameMapValue) {
-                    alert('กรุณาระบุชื่อรายการ');
-                    document.getElementById('itemNameMap').focus();
-                    return;
-                }
-
-                if (itemNameMapValue === 'other_manual_input') {
-                    if (!itemNameInput.value || !itemNameInput.value.trim()) {
-                        alert('กรุณาระบุชื่อรายการ (อื่นๆ)');
-                        itemNameInput.style.display = 'block'; // Ensure it's visible
-                        itemNameInput.focus();
-                        return;
-                    }
-                } else {
-                    // Auto-sync value in case onchange missed it
-                    itemNameInput.value = itemNameMapValue;
-                    itemNameInput.style.display = 'none';
+                // Item Name Validation moved to Step 3
+                
+                // Init Step 3 with one row if empty
+                const container = document.getElementById('items-container');
+                if (container.children.length === 0) {
+                     addItemRow();
                 }
 
                 currentStep = 3;
             }
             else if (currentStep === 3) {
+                 // Validate Step 3 Items
+                 const rows = document.querySelectorAll('.item-row');
+                 if(rows.length === 0) {
+                     alert('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ');
+                     return;
+                 }
+
+                 let isValid = true;
+                 rows.forEach((row, index) => {
+                     const nameMap = row.querySelector('.item-name-map');
+                     const nameInput = row.querySelector('.item-name-input');
+                     const qty = row.querySelector('.item-qty');
+                     const price = row.querySelector('.item-price');
+
+                     if (!nameMap.value) {
+                         alert(`กรุณาระบุชื่อรายการ (รายการที่ ${index + 1})`);
+                         nameMap.focus();
+                         isValid = false;
+                         return;
+                     }
+                     if (nameMap.value === 'other_manual_input' && !nameInput.value.trim()) {
+                         alert(`กรุณาระบุชื่อรายการอื่นๆ (รายการที่ ${index + 1})`);
+                         nameInput.focus();
+                         isValid = false;
+                         return;
+                     }
+                     if (!qty.value || parseFloat(qty.value) <= 0) {
+                         alert(`กรุณาระบุจำนวนหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
+                         qty.focus();
+                         isValid = false;
+                         return;
+                     }
+                     if (!price.value || parseFloat(price.value) <= 0) {
+                         alert(`กรุณาระบุราคาต่อหน่วยให้ถูกต้อง (รายการที่ ${index + 1})`);
+                         price.focus();
+                         isValid = false;
+                         return;
+                     }
+                 });
+
+                 if(!isValid) return;
+
                 currentStep = 4;
+            }
+            else if (currentStep === 4) {
+                // Validate Step 4: Plan Total check
+                const diffEl = document.getElementById('displayPlanDiff');
+                // Check color or value. Parse value.
+                const diffText = diffEl.textContent;
+                // We'll trust the color logic strictly or re-calc. 
+                // Let's re-calc to be safe.
+                const totalBudgetStr = document.getElementById('total').value || "0";
+                const totalBudget = parseFloat(totalBudgetStr.replace(/,/g, '')) || 0;
+
+                let currentPlanTotal = 0;
+                document.querySelectorAll('.plan-month').forEach(inp => {
+                    const val = parseFloat(inp.value) || 0;
+                    currentPlanTotal += val;
+                });
+
+                if (Math.abs(totalBudget - currentPlanTotal) > 0.01) { // Floating point tolerance
+                    alert(`ยอดรวมแผนรายเดือน (${currentPlanTotal.toLocaleString('th-TH')}) ไม่ตรงกับงบประมาณที่ขอ (${totalBudget.toLocaleString('th-TH')})\nกรุณาตรวจสอบยอดเงินให้ถูกต้อง`);
+                    return;
+                }
+
+                currentStep = 5;
+            }
+            else if (currentStep === 5) {
+                currentStep = 6;
             }
 
             updateStepUI();
         }
 
         function prevStep() {
-            if (currentStep === 4) currentStep = 3;
+            if (currentStep === 6) currentStep = 5;
+            else if (currentStep === 5) currentStep = 4;
+            else if (currentStep === 4) currentStep = 3;
             else if (currentStep === 3) currentStep = 2;
             else if (currentStep === 2) {
                 if (isSpecialFlow()) currentStep = 1.5;
@@ -1798,12 +2049,100 @@
             document.getElementById('hasSpecialStep').value = isSpecial;
         }
 
+        // --- Dynamic Item Rows Logic ---
+        
+        function addItemRow() {
+            const container = document.getElementById('items-container');
+            const rowId = 'row-' + Date.now();
+            
+            const rowHtml = `
+                <div class="item-row" id="${rowId}" style="border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; background: white; position: relative;">
+                    <button type="button" class="btn-close" onclick="removeItemRow('${rowId}')" style="position: absolute; top: 10px; right: 10px; font-size: 0.8em; color: #ef4444;" tabindex="-1">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="form-label">ชื่อรายการ <span class="required">*</span></label>
+                        <div style="display: flex; gap: 10px;">
+                            <select class="form-control item-name-map" onchange="toggleItemNameInput(this)" style="flex:1;">
+                                <option value="" disabled selected>-- เลือกรายการจากฐานข้อมูล --</option>
+                                <optgroup label="ค่าตอบแทน">
+                                    <option value="ค่าตอบแทนกรรมการ">ค่าตอบแทนกรรมการ</option>
+                                    <option value="ค่าสอน">ค่าสอน</option>
+                                    <option value="ค่าเบี้ยประชุมคณะกรรมการ">ค่าเบี้ยประชุมคณะกรรมการ</option>
+                                    <option value="เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร">เงินประจำตำแหน่งและค่าตอบแทนผู้บริหาร</option>
+                                </optgroup>
+                                <optgroup label="ค่าใช้สอย">
+                                    <option value="ค่าจ้างเหมาบริการ">ค่าจ้างเหมาบริการ</option>
+                                    <option value="ค่ารับรองและพิธีการ">ค่ารับรองและพิธีการ</option>
+                                    <option value="ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ">ค่าเบี้ยเลี้ยง ค่าเช่าที่พัก และค่าพาหนะ</option>
+                                </optgroup>
+                                <optgroup label="ค่าวัสดุ">
+                                    <option value="วัสดุสำนักงาน">วัสดุสำนักงาน</option>
+                                    <option value="วัสดุคอมพิวเตอร์">วัสดุคอมพิวเตอร์</option>
+                                    <option value="วัสดุงานบ้านงานครัว">วัสดุงานบ้านงานครัว</option>
+                                </optgroup>
+                                <option value="other_manual_input" style="font-weight: bold; color: var(--primary);">+ อื่นๆ (ระบุเอง)</option>
+                            </select>
+                            <input type="text" class="form-control item-name-input" placeholder="ระบุชื่อรายการ..." style="display: none; flex:1;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">จำนวน (หน่วย) <span class="required">*</span></label>
+                            <input type="number" class="form-control item-qty" placeholder="0" oninput="calculateTotal()">
+                        </div>
+                         <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">ราคา/หน่วย (บาท) <span class="required">*</span></label>
+                            <input type="number" class="form-control item-price" placeholder="0.00" oninput="calculateTotal()">
+                        </div>
+                         <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">รวม (บาท)</label>
+                            <input type="text" class="form-control item-total" readonly style="background-color: #f8fafc; color: var(--text-main); font-weight: 500;" value="0.00">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', rowHtml);
+        }
+
+        function removeItemRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.remove();
+                calculateTotal();
+            }
+        }
+
+        function toggleItemNameInput(selectElement) {
+             const row = selectElement.closest('.item-row');
+             const manualInput = row.querySelector('.item-name-input');
+             
+             if (selectElement.value === 'other_manual_input') {
+                manualInput.style.display = 'block';
+                manualInput.focus();
+                manualInput.value = ''; 
+             } else {
+                manualInput.style.display = 'none';
+                manualInput.value = selectElement.value; 
+             }
+        }
+
         function calculateTotal() {
-            const qty = parseFloat(document.getElementById('qty').value) || 0;
-            const price = parseFloat(document.getElementById('price').value) || 0;
-            const total = qty * price;
+            let grandTotal = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = qty * price;
+                
+                row.querySelector('.item-total').value = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+                grandTotal += total;
+            });
+            
             const totalEl = document.getElementById('total');
-            if (totalEl) totalEl.value = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            if (totalEl) totalEl.value = grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 });
         }
 
         function resetWizard() {
@@ -1812,17 +2151,17 @@
             document.getElementById('detailsForm').reset();
             document.getElementById('selectedCategory').value = '';
             document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById('qty').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('total').value = '';
+            
+            // Clear items
+            const container = document.getElementById('items-container');
+            if (container) container.innerHTML = '';
+            
+            // Reset Total
+            const totalEl = document.getElementById('total');
+            if (totalEl) totalEl.value = '0.00';
+
             const displayCat = document.getElementById('displayCategory');
             if (displayCat) displayCat.innerText = '';
-
-            // Reset Item Name
-            const itemNameMap = document.getElementById('itemNameMap');
-            if (itemNameMap) itemNameMap.value = "";
-            const itemName = document.getElementById('itemName');
-            if (itemName) itemName.style.display = 'none';
 
             updateStepUI();
         }
@@ -1832,7 +2171,32 @@
             closeWizard();
         }
 
-        // --- New Item Name Logic ---
+        // --- Step 4 Plan Calculation ---
+        function calculatePlanTotal() {
+            let planTotal = 0;
+            document.querySelectorAll('.plan-month').forEach(inp => {
+                const val = parseFloat(inp.value) || 0;
+                planTotal += val;
+            });
+
+            const totalBudgetStr = document.getElementById('total').value || "0";
+            const totalBudget = parseFloat(totalBudgetStr.replace(/,/g, '')) || 0;
+            const diff = totalBudget - planTotal;
+
+            document.getElementById('displayPlanTotal').textContent = planTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+            const diffEl = document.getElementById('displayPlanDiff');
+            diffEl.textContent = diff.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+
+            if (Math.abs(diff) < 0.01) {
+                diffEl.style.color = 'var(--success)';
+                diffEl.innerHTML = '<i class="fas fa-check-circle"></i> ครบถ้วน';
+            } else if (diff > 0) {
+                diffEl.style.color = '#ef4444'; // Red for missing
+            } else {
+                diffEl.style.color = '#f59e0b'; // Orange for over
+            }
+        }
+
         function toggleItemNameInput(selectElement) {
             const manualInput = document.getElementById('itemName');
             if (selectElement.value === 'other_manual_input') {
