@@ -1178,6 +1178,46 @@
                     </div>
                 </div>
 
+                <!-- Ceiling Summary: กรอบวงเงินที่สภาอนุมัติ -->
+                <div style="margin-top:18px; margin-bottom:18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;" id="ceiling-summary">
+                    <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+                        <div class="stat-label">กรอบเงินรายได้ที่สภาอนุมัติ (บาท)</div>
+                        <div class="stat-value" id="ceiling-revenue">2,000,000</div>
+                        <div class="stat-label" style="margin-top:8px;">คำขอจากแหล่งเงินรายได้ (20)</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                            <div style="font-weight:600; color:var(--text-main);" id="requested-revenue">0</div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <div id="rev-percent" style="font-size:0.85rem; color:var(--text-muted);">(0%)</div>
+                                <div id="rev-status" style="font-size:0.9rem; color:var(--success);">ภายในกรอบ</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #10b981;">
+                        <div class="stat-label">กรอบเงินสะสมที่สภาอนุมัติ (บาท)</div>
+                        <div class="stat-value" id="ceiling-accum">500,000</div>
+                        <div class="stat-label" style="margin-top:8px;">คำขอจากแหล่งเงินสะสม (24)</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                            <div style="font-weight:600; color:var(--text-main);" id="requested-accum">0</div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <div id="acc-percent" style="font-size:0.85rem; color:var(--text-muted);">(0%)</div>
+                                <div id="acc-status" style="font-size:0.9rem; color:var(--success);">ภายในกรอบ</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+                        <div class="stat-label">กรอบเงินกองทุนที่สภาอนุมัติ (บาท)</div>
+                        <div class="stat-value" id="ceiling-fund">300,000</div>
+                        <div class="stat-label" style="margin-top:8px;">คำขอจากแหล่งเงินกองทุน (22)</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                            <div style="font-weight:600; color:var(--text-main);" id="requested-fund">0</div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <div id="fund-percent" style="font-size:0.85rem; color:var(--text-muted);">(0%)</div>
+                                <div id="fund-status" style="font-size:0.9rem; color:var(--success);">ภายในกรอบ</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tab Navigation & Content -->
                 
                 <!-- Charts removed from this view as requested -->
@@ -1216,35 +1256,8 @@
                                             <th>จัดการ</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>จัดซื้อเครื่องคอมพิวเตอร์สำนักงาน</td>
-                                            <td><span
-                                                    style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบลงทุน</span>
-                                            </td>
-                                            <td>85,000</td>
-                                            <td><i class="fas fa-circle" style="color: #10b981; font-size: 0.6em;"></i>
-                                                อนุมัติแล้ว
-                                            </td>
-                                            <td><i class="fas fa-ellipsis-h"
-                                                    style="color: var(--text-muted); cursor: pointer;"></i>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>ค่าเบี้ยประชุมคณะกรรมการ</td>
-                                            <td><span
-                                                    style="background: #eff6ff; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">งบดำเนินงาน</span>
-                                            </td>
-                                            <td>12,000</td>
-                                            <td><i class="fas fa-circle" style="color: #f59e0b; font-size: 0.6em;"></i>
-                                                รอดำเนินการ
-                                            </td>
-                                            <td><i class="fas fa-ellipsis-h"
-                                                    style="color: var(--text-muted); cursor: pointer;"></i>
-                                            </td>
-                                        </tr>
+                                    <tbody id="budget-requests-tbody">
+                                        <!-- Rows are rendered by JS. Initial demo dataset is populated on load. -->
                                     </tbody>
                                 </table>
                             </div>
@@ -2431,8 +2444,52 @@
         }
 
         function saveData() {
-            alert('บันทึกข้อมูลเรียบร้อยแล้ว');
-            closeWizard();
+            try {
+                // Build request object from wizard fields
+                const srcEl = document.getElementById('budgetSource');
+                const source = srcEl ? srcEl.value : '';
+                const sourceLabel = srcEl ? srcEl.options[srcEl.selectedIndex]?.text || '' : '';
+                const deptEl = document.getElementById('department');
+                const deptLabel = deptEl ? deptEl.options[deptEl.selectedIndex]?.text || '' : '';
+                const name = (document.getElementById('itemName') && document.getElementById('itemName').value) || (document.querySelector('.item-name-input') && document.querySelector('.item-name-input').value) || 'รายการใหม่';
+                const subCatEl = document.getElementById('subCategory');
+                const subCat = subCatEl ? subCatEl.options[subCatEl.selectedIndex]?.text || '' : '';
+
+                // total field contains formatted number
+                const totalStr = document.getElementById('total').value || '0';
+                const amount = parseFloat(String(totalStr).replace(/,/g, '')) || 0;
+
+                const newReq = {
+                    id: 'R' + Date.now(),
+                    name: name,
+                    source: source, // value e.g. '20'
+                    sourceLabel: sourceLabel,
+                    dept: deptLabel,
+                    typeLabel: subCat,
+                    amount: amount,
+                    status: 'รอดำเนินการ'
+                };
+
+                requestsData.push(newReq);
+                renderRequestsTable();
+                updateCeilingSummary();
+
+                // Alert if we are now over any ceiling
+                const over = checkCeilingExceeded();
+                if (over.revenueExceeded || over.accumExceeded) {
+                    let msg = 'คำขอใหม่ทำให้เกินกรอบวงเงินที่สภาอนุมัติ:\n';
+                    if (over.revenueExceeded) msg += `- กรอบเงินรายได้: ขอ ${over.revenueRequested.toLocaleString('th-TH')} / กรอบ ${over.revenueCeiling.toLocaleString('th-TH')}\n`;
+                    if (over.accumExceeded) msg += `- กรอบเงินสะสม: ขอ ${over.accumRequested.toLocaleString('th-TH')} / กรอบ ${over.accumCeiling.toLocaleString('th-TH')}\n`;
+                    alert(msg);
+                } else {
+                    alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+                }
+
+                closeWizard();
+            } catch (e) {
+                console.error(e);
+                alert('เกิดข้อผิดพลาดขณะบันทึกข้อมูล');
+            }
         }
 
         // --- Step 4 Plan Calculation ---
@@ -2473,6 +2530,133 @@
                 manualInput.value = selectElement.value; // Store the selected value in the hidden input for compatibility
             }
         }
+
+        // --- Requests data + ceiling checks ---
+        const requestsData = [];
+
+        // Initialize with demo entries (matches prior static rows)
+        function initRequestsDemo() {
+            requestsData.length = 0;
+            requestsData.push({ id: 'R1', name: 'จัดซื้อเครื่องคอมพิวเตอร์สำนักงาน', source: '24', sourceLabel: '24: เงินสะสม', dept: 'สำนักงานเลขานุการ', typeLabel: 'งบลงทุน', amount: 85000, status: 'อนุมัติแล้ว' });
+            requestsData.push({ id: 'R2', name: 'ค่าเบี้ยประชุมคณะกรรมการ', source: '20', sourceLabel: '20: เงินรายได้', dept: 'ภาควิชาบริหารธุรกิจ', typeLabel: 'งบดำเนินงาน', amount: 12000, status: 'รอดำเนินการ' });
+            // Demo for กองทุน (22)
+            requestsData.push({ id: 'R3', name: 'ทุนสนับสนุนงานวิจัย', source: '22', sourceLabel: '22: เงินกองทุน', dept: 'ภาควิชาการบัญชี', typeLabel: 'งบอุดหนุน', amount: 45000, status: 'รอดำเนินการ' });
+        }
+
+        function renderRequestsTable() {
+            const tbody = document.getElementById('budget-requests-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            requestsData.forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>${escapeHtml(r.name)}</td>
+                    <td><span style="background: #eff6ff; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">${escapeHtml(r.typeLabel)}</span></td>
+                    <td>${r.amount.toLocaleString('th-TH')}</td>
+                    <td><i class="fas fa-circle" style="color: ${r.status === 'อนุมัติแล้ว' ? '#10b981' : '#f59e0b'}; font-size: 0.6em;"></i> ${escapeHtml(r.status)}</td>
+                    <td><i class="fas fa-ellipsis-h" style="color: var(--text-muted); cursor: pointer;"></i></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, function (m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]; });
+        }
+
+        function updateCeilingSummary() {
+            const revCeilEl = document.getElementById('ceiling-revenue');
+            const accCeilEl = document.getElementById('ceiling-accum');
+            const revReqEl = document.getElementById('requested-revenue');
+            const accReqEl = document.getElementById('requested-accum');
+            const revStatusEl = document.getElementById('rev-status');
+            const accStatusEl = document.getElementById('acc-status');
+
+            const revCeil = parseFloat(String((revCeilEl && revCeilEl.textContent) || '0').replace(/,/g, '')) || 0;
+            const accCeil = parseFloat(String((accCeilEl && accCeilEl.textContent) || '0').replace(/,/g, '')) || 0;
+
+            // Sum requests by source codes: revenue=20, accum=24
+            let revRequested = 0;
+            let accRequested = 0;
+            let fundRequested = 0;
+            requestsData.forEach(r => {
+                if (String(r.source) === '20') revRequested += (r.amount || 0);
+                if (String(r.source) === '24') accRequested += (r.amount || 0);
+                if (String(r.source) === '22') fundRequested += (r.amount || 0);
+            });
+
+            if (revReqEl) revReqEl.textContent = revRequested.toLocaleString('th-TH');
+            if (accReqEl) accReqEl.textContent = accRequested.toLocaleString('th-TH');
+
+            // Percent calculations
+            const revPct = revCeil > 0 ? (revRequested / revCeil) * 100 : 0;
+            const accPct = accCeil > 0 ? (accRequested / accCeil) * 100 : 0;
+            const fundCeil = parseFloat(String((document.getElementById('ceiling-fund') && document.getElementById('ceiling-fund').textContent) || '0').replace(/,/g, '')) || 0;
+            const fundPct = fundCeil > 0 ? (fundRequested / fundCeil) * 100 : 0;
+
+            const revPctEl = document.getElementById('rev-percent');
+            const accPctEl = document.getElementById('acc-percent');
+            const fundPctEl = document.getElementById('fund-percent');
+            if (revPctEl) revPctEl.textContent = `(${revPct.toFixed(1)}%)`;
+            if (accPctEl) accPctEl.textContent = `(${accPct.toFixed(1)}%)`;
+            if (fundPctEl) fundPctEl.textContent = `(${fundPct.toFixed(1)}%)`;
+
+            if (revRequested > revCeil) {
+                if (revStatusEl) { revStatusEl.textContent = 'เกินกรอบ'; revStatusEl.style.color = '#ef4444'; }
+            } else {
+                if (revStatusEl) { revStatusEl.textContent = 'ภายในกรอบ'; revStatusEl.style.color = 'var(--success)'; }
+            }
+
+            if (accRequested > accCeil) {
+                if (accStatusEl) { accStatusEl.textContent = 'เกินกรอบ'; accStatusEl.style.color = '#ef4444'; }
+            } else {
+                if (accStatusEl) { accStatusEl.textContent = 'ภายในกรอบ'; accStatusEl.style.color = 'var(--success)'; }
+            }
+
+            const fundStatusEl = document.getElementById('fund-status');
+            if (fundRequested > fundCeil) {
+                if (fundStatusEl) { fundStatusEl.textContent = 'เกินกรอบ'; fundStatusEl.style.color = '#ef4444'; }
+            } else {
+                if (fundStatusEl) { fundStatusEl.textContent = 'ภายในกรอบ'; fundStatusEl.style.color = 'var(--success)'; }
+            }
+        }
+
+        function checkCeilingExceeded() {
+            const revCeilEl = document.getElementById('ceiling-revenue');
+            const accCeilEl = document.getElementById('ceiling-accum');
+            const revCeil = parseFloat(String((revCeilEl && revCeilEl.textContent) || '0').replace(/,/g, '')) || 0;
+            const accCeil = parseFloat(String((accCeilEl && accCeilEl.textContent) || '0').replace(/,/g, '')) || 0;
+            let revRequested = 0;
+            let accRequested = 0;
+            let fundRequested = 0;
+            requestsData.forEach(r => {
+                if (String(r.source) === '20') revRequested += (r.amount || 0);
+                if (String(r.source) === '24') accRequested += (r.amount || 0);
+                if (String(r.source) === '22') fundRequested += (r.amount || 0);
+            });
+            return {
+                revenueExceeded: revRequested > revCeil,
+                accumExceeded: accRequested > accCeil,
+                fundExceeded: fundRequested > accCeil ? true : (fundRequested > fundCeil),
+                revenueRequested: revRequested,
+                accumRequested: accRequested,
+                fundRequested: fundRequested,
+                revenueCeiling: revCeil,
+                accumCeiling: accCeil,
+                fundCeiling: fundCeil
+            };
+        }
+
+        // Initialize demo data and render on load
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                initRequestsDemo();
+                renderRequestsTable();
+                updateCeilingSummary();
+            } catch (e) { console.error(e); }
+        });
     </script>
 </body>
 
