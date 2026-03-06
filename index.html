@@ -1006,8 +1006,21 @@
                 <img src="logo.png" alt="MSU_BMS" style="max-width: 100%; border-radius: 4px;">
             </div>
             <nav>
-                <div class="nav-item active" onclick="switchView('dashboard', this)">
-                    <i class="fas fa-home"></i> <span>Dashboard</span>
+               
+                <!-- Group 1: Dashboard -->
+                <div class="nav-group">
+                    <div class="nav-header" onclick="toggleMenu(this)">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <i class="fas fa-coins"></i> <span>Dashboard</span>
+                        </div>
+                        <i class="fas fa-chevron-down nav-arrow"></i>
+                    </div>
+                    <div class="nav-content">
+                        <div class="nav-sub-item">งบประมาณเงินแผ่นดิน</div>
+                        <div class="nav-sub-item">งบประมาณเงินรายได้</div>
+                        <div class="nav-sub-item">งานบริหารกรอบอัตรากำลัง</div>
+
+                    </div>
                 </div>
 
                 <!-- Group 1: ประมาณการรายได้ -->
@@ -2661,4 +2674,5 @@
 </body>
 
 </html>
+
 
